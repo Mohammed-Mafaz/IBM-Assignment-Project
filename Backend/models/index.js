@@ -3,8 +3,8 @@ const dbConfig = require('../config/config.js').development;
 
 // Initialize Sequelize
 const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
-    host: dbConfig.host,
-    dialect: dbConfig.dialect,
+  host: dbConfig.host,
+  dialect: dbConfig.dialect,
 });
 
 // Import Models
@@ -17,15 +17,20 @@ const Card = require('./card')(sequelize, DataTypes);
 const LibraryBranch = require('./libraryBranch')(sequelize, DataTypes);
 
 sequelize.sync({ alter: true })
-    .then(() => {
-        console.log('All models were synchronized successfully.');
-    })
-    .catch((err) => {
-        console.error('Error synchronizing models:', err);
-    });
-
+  .then(() => {
+    console.log('All models were synchronized successfully.');
+  })
+  .catch((err) => {
+    console.error('Error synchronizing models:', err);
+  });
 
 // Define Relationships
+
+// One Book belongs to one Author (One-to-Many)
+Book.belongsTo(BookAuthor, { foreignKey: 'authorId' }); // book has one author
+BookAuthor.hasMany(Book, { foreignKey: 'authorId' }); // author has many books
+
+// Define other relationships
 Book.belongsTo(Publisher, { foreignKey: 'publisherId' });
 Book.hasMany(BookCopy, { foreignKey: 'bookId' });
 BookCopy.belongsTo(Book, { foreignKey: 'bookId' });
@@ -37,12 +42,12 @@ LibraryBranch.hasMany(BookCopy, { foreignKey: 'libraryBranchId' });
 
 // Export Sequelize Instance and Models
 module.exports = {
-    sequelize,
-    Book,
-    Publisher,
-    BookAuthor,
-    BookCopy,
-    BookLending,
-    Card,
-    LibraryBranch,
+  sequelize,
+  Book,
+  Publisher,
+  BookAuthor,
+  BookCopy,
+  BookLending,
+  Card,
+  LibraryBranch,
 };

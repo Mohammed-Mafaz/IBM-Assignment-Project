@@ -4,16 +4,27 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start":"node app.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["library", "backend", "nodejs", "express", "sequelize", "mysql"],
+  "keywords": [
+    "library",
+    "backend",
+    "nodejs",
+    "express",
+    "sequelize",
+    "mysql"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "mongodb": "^6.12.0",
     "mysql2": "^3.11.5",
     "sequelize": "^6.37.5"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.2"
   }
 }

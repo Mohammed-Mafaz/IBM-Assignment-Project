@@ -28,6 +28,17 @@ module.exports = (sequelize) => {
                 onUpdate: 'CASCADE', // Ensures changes to the referenced row update this field
                 onDelete: 'SET NULL', // If the referenced publisher is deleted, set this field to NULL
             },
+            // Add authorId field
+            authorId: {
+                type: DataTypes.INTEGER,
+                allowNull: true, // Allow null if a book doesn't have an author
+                references: {
+                    model: 'book_authors', // Ensure 'book_authors' matches the table name in the Author model
+                    key: 'id',
+                },
+                onUpdate: 'CASCADE', // Ensures changes to the referenced row update this field
+                onDelete: 'SET NULL', // If the referenced author is deleted, set this field to NULL
+            },
         },
         {
             tableName: 'books',
