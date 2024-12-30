@@ -2,7 +2,9 @@
 node_modules/
 
 # Ignore config
-config.js
+config.js 
+
+.env
 
 # Ignore logs
 npm-debug.log*
