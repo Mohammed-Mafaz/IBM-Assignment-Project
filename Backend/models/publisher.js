@@ -1,24 +1,20 @@
-const { DataTypes } = require('sequelize');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-module.exports = (sequelize) => {
-    const Publisher = sequelize.define(
-        'Publisher',
-        {
-            id: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
-                autoIncrement: true,
-            },
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-        },
-        {
-            tableName: 'publishers',
-            timestamps: false,
-        }
-    );
+// Define the Publisher schema
+const publisherSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true, // This is equivalent to "allowNull: false" in Sequelize
+    },
+  },
+  {
+    timestamps: true,  // Optional, this adds createdAt and updatedAt fields automatically
+  }
+);
 
-    return Publisher;
-};
+// Create the Publisher model using the schema
+const Publisher = mongoose.model('Publisher', publisherSchema);
+
+module.exports = Publisher;

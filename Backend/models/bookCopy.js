@@ -1,38 +1,29 @@
-const { DataTypes } = require('sequelize');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-module.exports = (sequelize) => {
-    const BookCopy = sequelize.define(
-        'BookCopy',
-        {
-            id: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
-                autoIncrement: true,
-            },
-            bookId: {
-                type: DataTypes.INTEGER,
-                references: {
-                    model: 'books',
-                    key: 'id',
-                },
-            },
-            libraryBranchId: {
-                type: DataTypes.INTEGER,
-                references: {
-                    model: 'library_branches',
-                    key: 'id',
-                },
-            },
-            availableCopies: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: true,
-            },
-        },
-        {
-            tableName: 'book_copies',
-            timestamps: false,
-        }
-    );
+// Define the BookCopy schema
+const bookCopySchema = new Schema(
+  {
+    bookId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Book',  // Reference to the Book model
+      required: true,
+    },
+    libraryBranchId: {
+      type: Schema.Types.ObjectId,
+      ref: 'LibraryBranch',  // Reference to the LibraryBranch model
+      required: true,
+    },
+    availableCopies: {
+      type: Number
+    },
+  },
+  {
+    timestamps: true,  // Optional, adds createdAt and updatedAt fields
+  }
+);
 
-    return BookCopy;
-};
+// Create a Mongoose model for BookCopy
+const BookCopy = mongoose.model('BookCopy', bookCopySchema);
+
+module.exports = BookCopy;

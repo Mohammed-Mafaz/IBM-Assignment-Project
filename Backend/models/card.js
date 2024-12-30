@@ -1,24 +1,20 @@
-const { DataTypes } = require('sequelize');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-module.exports = (sequelize) => {
-    const Card = sequelize.define(
-        'Card',
-        {
-            id: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
-                autoIncrement: true,
-            },
-            holderName: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-        },
-        {
-            tableName: 'cards',
-            timestamps: false,
-        }
-    );
+// Define the Card schema
+const cardSchema = new Schema(
+  {
+    holderName: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,  // Optional, adds createdAt and updatedAt fields
+  }
+);
 
-    return Card;
-};
+// Create a Mongoose model for Card
+const Card = mongoose.model('Card', cardSchema);
+
+module.exports = Card;

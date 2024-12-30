@@ -1,32 +1,20 @@
-const { DataTypes } = require('sequelize');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-module.exports = (sequelize) => {
-  const BookAuthor = sequelize.define(
-    'BookAuthor',
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+// Define the BookAuthor schema
+const bookAuthorSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
     },
-    {
-      tableName: 'book_authors',
-      timestamps: false,
-    }
-  );
+  },
+  {
+    timestamps: true,  // Optional, adds createdAt and updatedAt fields
+  }
+);
 
-  // One Author can have many Books
-  BookAuthor.associate = function(models) {
-    BookAuthor.hasMany(models.Book, {
-      foreignKey: 'authorId', // Associate with the book's authorId field
-      as: 'books', // Alias for the relationship
-    });
-  };
+// Create a Mongoose model for BookAuthor
+const BookAuthor = mongoose.model('BookAuthor', bookAuthorSchema);
 
-  return BookAuthor;
-};
+module.exports = BookAuthor;

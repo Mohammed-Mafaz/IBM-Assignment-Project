@@ -1,53 +1,25 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const dbConfig = require('../config/config.js').development;
+const mongoose = require('mongoose');
+const dbConfig = require('../config/db');
 
-// Initialize Sequelize
-const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
-  host: dbConfig.host,
-  dialect: dbConfig.dialect,
+// Connect to MongoDB using Mongoose
+mongoose.connect(dbConfig.mongoDB.url + '/' + dbConfig.mongoDB.database, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
-// Import Models
-const Book = require('./book')(sequelize, DataTypes);
-const Publisher = require('./publisher')(sequelize, DataTypes);
-const BookAuthor = require('./bookAuthor')(sequelize, DataTypes);
-const BookCopy = require('./bookCopy')(sequelize, DataTypes);
-const BookLending = require('./bookLending')(sequelize, DataTypes);
-const Card = require('./card')(sequelize, DataTypes);
-const LibraryBranch = require('./libraryBranch')(sequelize, DataTypes);
+const BookAuthor = require('./bookAuthor');
+const BookCopy = require('./bookCopy');
+const BookLending = require('./bookLending');
+const Card = require('./card');
+const LibraryBranch = require('./libraryBranch');
+const Publisher = require('./publisher');
 
-sequelize.sync({ alter: true })
-  .then(() => {
-    console.log('All models were synchronized successfully.');
-  })
-  .catch((err) => {
-    console.error('Error synchronizing models:', err);
-  });
-
-// Define Relationships
-
-// One Book belongs to one Author (One-to-Many)
-Book.belongsTo(BookAuthor, { foreignKey: 'authorId' }); // book has one author
-BookAuthor.hasMany(Book, { foreignKey: 'authorId' }); // author has many books
-
-// Define other relationships
-Book.belongsTo(Publisher, { foreignKey: 'publisherId' });
-Book.hasMany(BookCopy, { foreignKey: 'bookId' });
-BookCopy.belongsTo(Book, { foreignKey: 'bookId' });
-BookCopy.belongsTo(LibraryBranch, { foreignKey: 'libraryBranchId' });
-BookLending.belongsTo(BookCopy, { foreignKey: 'bookCopyId' });
-BookLending.belongsTo(Card, { foreignKey: 'cardId' });
-Card.hasMany(BookLending, { foreignKey: 'cardId' });
-LibraryBranch.hasMany(BookCopy, { foreignKey: 'libraryBranchId' });
-
-// Export Sequelize Instance and Models
+// Export models
 module.exports = {
-  sequelize,
-  Book,
-  Publisher,
   BookAuthor,
   BookCopy,
   BookLending,
   Card,
   LibraryBranch,
+  Publisher,
 };

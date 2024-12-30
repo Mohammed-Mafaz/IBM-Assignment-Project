@@ -1,28 +1,20 @@
-const { DataTypes } = require('sequelize');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-module.exports = (sequelize) => {
-    const LibraryBranch = sequelize.define(
-        'LibraryBranch',
-        {
-            id: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
-                autoIncrement: true,
-            },
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            location: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-        },
-        {
-            tableName: 'library_branches',
-            timestamps: false,
-        }
-    );
+// Define the Publisher schema
+const publisherSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,  // Optional, adds createdAt and updatedAt fields
+  }
+);
 
-    return LibraryBranch;
-};
+// Create a Mongoose model for Publisher
+const Publisher = mongoose.model('Publisher', publisherSchema);
+
+module.exports = Publisher;

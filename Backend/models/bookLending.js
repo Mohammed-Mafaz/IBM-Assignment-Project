@@ -1,41 +1,33 @@
-const { DataTypes } = require('sequelize');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-module.exports = (sequelize) => {
-    const BookLending = sequelize.define(
-        'BookLending',
-        {
-            id: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
-                autoIncrement: true,
-            },
-            bookCopyId: {
-                type: DataTypes.INTEGER,
-                references: {
-                    model: 'book_copies',
-                    key: 'id',
-                },
-            },
-            cardId: {
-                type: DataTypes.INTEGER,
-                references: {
-                    model: 'cards',
-                    key: 'id',
-                },
-            },
-            borrowDate: {
-                type: DataTypes.DATE,
-                allowNull: false,
-            },
-            returnDate: {
-                type: DataTypes.DATE,
-            },
-        },
-        {
-            tableName: 'book_lending',
-            timestamps: false,
-        }
-    );
+// Define the BookLending schema
+const bookLendingSchema = new Schema(
+  {
+    bookCopyId: {
+      type: Schema.Types.ObjectId,
+      ref: 'BookCopy',  // Reference to the BookCopy model
+      required: true,
+    },
+    cardId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Card',  // Reference to the Card model
+      required: true,
+    },
+    borrowDate: {
+      type: Date,
+      required: true,
+    },
+    returnDate: {
+      type: Date,
+    },
+  },
+  {
+    timestamps: true,  // Optional, adds createdAt and updatedAt fields
+  }
+);
 
-    return BookLending;
-};
+// Create a Mongoose model for BookLending
+const BookLending = mongoose.model('BookLending', bookLendingSchema);
+
+module.exports = BookLending;
