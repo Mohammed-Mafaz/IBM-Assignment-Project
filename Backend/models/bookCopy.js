@@ -23,7 +23,7 @@ module.exports = (sequelize) => {
                     key: 'id',
                 },
             },
-            available: {
+            availableCopies: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: true,
             },
