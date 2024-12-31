@@ -29,13 +29,21 @@ async function migrateData() {
     const [libraryBranches] = await mysqlConnection.promise().query('SELECT * FROM library_branches');
     const [cards] = await mysqlConnection.promise().query('SELECT * FROM cards');
 
+    // Remove the 'id' field from each record
+    const removeIdField = (data) => {
+      return data.map(record => {
+        const { id, ...rest } = record; // Exclude 'id' field
+        return rest;
+      });
+    };
+
     // Insert Publishers into MongoDB
     const publishersCollection = db.collection('publishers');
-    await publishersCollection.insertMany(publishers);
+    await publishersCollection.insertMany(removeIdField(publishers));
 
     // Insert Authors into MongoDB
     const authorsCollection = db.collection('book_authors');
-    await authorsCollection.insertMany(authors);
+    await authorsCollection.insertMany(removeIdField(authors));
 
     // Process Books and embed Publisher and Authors
     const booksCollection = db.collection('books');
@@ -126,4 +134,3 @@ async function migrateData() {
 
 // Run the migration
 migrateData();
-

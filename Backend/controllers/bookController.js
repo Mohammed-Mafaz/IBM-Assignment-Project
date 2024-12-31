@@ -16,15 +16,18 @@ const getAllBooks = async (req, res) => {
 const getBookById = async (req, res) => {
   try {
     const db = await connectToDatabase();
-    const bookId = req.params.id;  // The ID from the URL parameters
+    const bookId = req.params.id;
 
-    // Ensure the bookId is valid as an ObjectId
+    console.log(`ObjectId.isValid("${bookId}"):`, ObjectId.isValid(bookId));
+
+
+    // Ensure the bookId is valid as a hexadecimal string
     if (!ObjectId.isValid(bookId)) {
       return res.status(400).json({ error: 'Invalid book ID' });
     }
 
-    // Fetch the book using the ObjectId
-    const book = await db.collection('books').findOne({ _id: new ObjectId(bookId) });
+    // Use the updated method to create an ObjectId
+    const book = await db.collection('books').findOne({ _id: ObjectId.createFromHexString(bookId) });
 
     if (book) {
       res.status(200).json(book);
@@ -36,6 +39,7 @@ const getBookById = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch the book' });
   }
 };
+
 
 // Create a new book
 const createBook = async (req, res) => {
@@ -54,21 +58,25 @@ const createBook = async (req, res) => {
   }
 };
 
-
-// Update a book
 const updateBook = async (req, res) => {
   try {
     const db = await connectToDatabase();
-    const bookId = new require('mongodb').ObjectId(req.params.id);
+    const bookId = req.params.id;
+    
+
+    if (!ObjectId.isValid(bookId)) {
+      return res.status(400).json({ error: 'Invalid book ID' });
+    }
+
     const updatedBook = req.body;
 
     const result = await db.collection('books').updateOne(
-      { _id: bookId },
-      { $set: updatedBook }  // MongoDB's updateOne() method
+      { _id: ObjectId.createFromHexString(bookId) },
+      { $set: updatedBook }
     );
 
     if (result.modifiedCount > 0) {
-      const updatedBookData = await db.collection('books').findOne({ _id: bookId });
+      const updatedBookData = await db.collection('books').findOne({ _id: ObjectId.createFromHexString(bookId) });
       res.status(200).json(updatedBookData);
     } else {
       res.status(404).json({ error: 'Book not found or no changes made' });
@@ -78,13 +86,18 @@ const updateBook = async (req, res) => {
   }
 };
 
+
 // Delete a book
 const deleteBook = async (req, res) => {
   try {
     const db = await connectToDatabase();
-    const bookId = new require('mongodb').ObjectId(req.params.id);
+    const bookId = req.params.id;
 
-    const result = await db.collection('books').deleteOne({ _id: bookId });  // MongoDB's deleteOne() method
+    if (!ObjectId.isValid(bookId)) {
+      return res.status(400).json({ error: 'Invalid book ID' });
+    }
+
+    const result = await db.collection('books').deleteOne({ _id: ObjectId.createFromHexString(bookId) });
 
     if (result.deletedCount > 0) {
       res.status(204).end();
@@ -95,5 +108,6 @@ const deleteBook = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete book' });
   }
 };
+
 
 module.exports = { getAllBooks, getBookById, createBook, updateBook, deleteBook };
